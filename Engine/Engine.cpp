@@ -22,7 +22,7 @@ void Engine::clearTree()
 
 void Engine::start()
 {
-    std::cout << "XML Parser has started. For command menu, use 'help'.";
+    std::cout << "XML Parser has started. For command menu, use 'help'." << std::endl;
 
     std::string input;
     bool menu = true;
@@ -55,27 +55,42 @@ void Engine::start()
             std::cout << "Exiting the program...";
             menu = false;
         }
-        else std::cout << "Invalid command. For command menu, use 'help'.";
+        else std::cout << "Invalid command. For command menu, use 'help'." << std::endl;
     }
 }
 
 void Engine::open(const std::string& filePath)
 {
-    //TODO: add more commands, fix menu
-    std::string input = "";
-    if (input == "close")
+    std::string input;
+    bool menu = true;
+
+    while (menu)
     {
-        /* code */
+        //TODO: add rest of the commands
+        std::cout << "> ";
+        std::getline(std::cin, input);
+        std::stringstream ss(input);
+        std::string command;
+        ss >> command;
+
+        if (command == "close")
+        {
+            /* code */
+        }
+        else if (command == "save")
+        {
+            /* code */
+        }
+        else if (command == "saveas")
+        {
+            /* code */
+        }
+        else if (command == "help")
+        {
+
+        }
+        else std::cout << "Invalid command. For command menu, use 'help'." << std::endl;
     }
-    else if (input == "save")
-    {
-        /* code */
-    }
-    else if (input == "saveas")
-    {
-        /* code */
-    }
-        
 }
 
 void Engine::close()
@@ -95,5 +110,11 @@ void Engine::saveAs(const std::string& savePath)
 
 void Engine::help()
 {
-
+    std::cout << "The following commands are supported:" << std::endl;
+    std::cout << "open <file>	opens <file>" << std::endl;
+    std::cout << "close			closes currently opened file" << std::endl;
+    std::cout << "save			saves the currently open file" << std::endl;
+    std::cout << "saveas <file>	saves the currently open file in <file>" << std::endl;
+    std::cout << "help			prints this information" << std::endl;
+    std::cout << "exit			exists the program" << std::endl;
 }
