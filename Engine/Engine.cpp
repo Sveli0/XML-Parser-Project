@@ -78,8 +78,8 @@ void Engine::start()
                 ss >> path;
                 if (path.empty())
                 {
-                    std::cout << "Path is empty.";
-                    break;
+                    std::cout << "Path is empty." << std::endl;
+                    continue;;
                 }
                 saveAs(path);
             }
@@ -126,7 +126,7 @@ void Engine::saveAs(const std::string& savePath)
 {
     if (XMLParser::saveToFile(savePath, root))
     {
-        std::cout << "Successfully saved " << filePath << std::endl;
+        std::cout << "Successfully saved " << savePath << std::endl;
     }
     else std::cout << "Something went wrong. File couldn't be saved." << std::endl;
 }
