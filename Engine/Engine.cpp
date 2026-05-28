@@ -39,6 +39,7 @@ void Engine::start()
         {
             std::string path;
             ss >> path;
+
             if (path.empty())
             {
                 std::cout << "Path is empty.";
@@ -61,6 +62,17 @@ void Engine::start()
 
 void Engine::open(const std::string& filePath)
 {
+    clearTree();
+    this -> filePath = filePath;
+    root = XMLParser::parseFile(filePath);
+
+    if (root == nullptr)
+    {
+        std::cout << "File " << filePath << " not found. Creating new file." << std::endl;
+        root = new XMLElement("");
+    }
+    else std::cout << "Successfully opened " << filePath << std::endl;
+
     std::string input;
     bool menu = true;
 
@@ -75,19 +87,28 @@ void Engine::open(const std::string& filePath)
 
         if (command == "close")
         {
-            /* code */
+            close();
+            menu = false;
         }
         else if (command == "save")
         {
-            /* code */
+            save();
         }
         else if (command == "saveas")
         {
-            /* code */
+            std::string path;
+            ss >> path;
+
+            if (path.empty())
+            {
+                std::cout << "Path is empty.";
+                break;
+            }
+            saveAs(path);
         }
         else if (command == "help")
         {
-
+            helpExtended();
         }
         else std::cout << "Invalid command. For command menu, use 'help'." << std::endl;
     }
@@ -111,10 +132,16 @@ void Engine::saveAs(const std::string& savePath)
 void Engine::help()
 {
     std::cout << "The following commands are supported:" << std::endl;
-    std::cout << "open <file>	opens <file>" << std::endl;
-    std::cout << "close			closes currently opened file" << std::endl;
-    std::cout << "save			saves the currently open file" << std::endl;
-    std::cout << "saveas <file>	saves the currently open file in <file>" << std::endl;
-    std::cout << "help			prints this information" << std::endl;
-    std::cout << "exit			exists the program" << std::endl;
+    std::cout << "open <file>\t\topens <file>" << std::endl;
+    std::cout << "help\t\t\tprints this information" << std::endl;
+    std::cout << "exit\t\t\texists the program" << std::endl;
+}
+
+void Engine::helpExtended()
+{
+    std::cout << "The following commands are supported:" << std::endl;
+    std::cout << "close\t\t\tcloses currently opened file" << std::endl;
+    std::cout << "save\t\t\tsaves the currently open file" << std::endl;
+    std::cout << "saveas <file>\t\tsaves the currently open file in <file>" << std::endl;
+    std::cout << "help\t\t\tprints this information" << std::endl;
 }
