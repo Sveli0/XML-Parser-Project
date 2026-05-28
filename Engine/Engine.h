@@ -17,6 +17,7 @@ class Engine
         ~Engine();
 
         void start();
+        XMLElement* findElementById(XMLElement* current, const std::string& id);
 
         void open(const std::string& filePath);
         void close();

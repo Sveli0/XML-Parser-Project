@@ -63,6 +63,7 @@ void Engine::start()
         }
         else //Тази част се пуска след като е отворен някакъв файл. Разделям менюто на две, преди и след отваряне на файл.
         {
+            //TODO: rest of commands
             if (command == "close")
             {
                 close();
@@ -146,4 +147,68 @@ void Engine::helpExtended()
     std::cout << "save\t\t\tsaves the currently open file" << std::endl;
     std::cout << "saveas <file>\t\tsaves the currently open file in <file>" << std::endl;
     std::cout << "help\t\t\tprints this information" << std::endl;
+}
+
+void Engine::print()
+{
+    //TODO: print in XML file style
+}
+
+void Engine::selectAttribute(const std::string& id, const std::string& key)
+{
+    XMLElement* el = findElementById(root, id);
+    if (el != nullptr)
+    {
+        std::string val = el -> getAttribute(key);
+        if (val != "") std::cout << key << ": " << val << std::endl;
+        else std::cout << "Attribute " << key << " does not exist for element with ID: " << id << std::endl;
+    }
+    else std::cout << "Element with ID: " << id << " not found." << std::endl;
+}
+
+void Engine::setAttribute(const std::string& id, const std::string& key, const std::string& value)
+{
+    //TODO:
+}
+
+void Engine::deleteAttribute(const std::string& id, const std::string& key)
+{
+    //TODO:
+}
+
+void Engine::showText(const std::string& id)
+{
+    //TODO:
+}
+
+void Engine::printChildren(const std::string& id)
+{
+    //TODO:
+}
+
+void Engine::printChild(const std::string& id, int n)
+{
+    //TODO:
+}
+
+void Engine::addNewChild(const std::string& id)
+{
+    //TODO:
+}
+
+void Engine::executeXPathQuery(const std::string& xPathQuery)
+{
+    //TODO:
+}
+
+XMLElement* Engine::findElementById(XMLElement* current, const std::string& id)
+{
+    if (current == nullptr) return nullptr;
+    if (current -> getId() == id) return current;
+    for (XMLElement* child : current -> getChildren())
+    {
+        XMLElement* el = findElementById(child, id);
+        if (el != nullptr) return el;
+    }
+    return nullptr;
 }
