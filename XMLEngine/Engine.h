@@ -2,7 +2,7 @@
 #include <string>
 #include <map>
 
-class XMLEngine
+class Engine
 {
     private:
         std::string filePath;
@@ -13,8 +13,8 @@ class XMLEngine
         XMLElement* findElementById(XMLElement* current, const std::string& targetId) const;
 
     public:
-        XMLEngine();
-        ~XMLEngine();
+        Engine();
+        ~Engine();
 
         void start();
 
@@ -23,6 +23,7 @@ class XMLEngine
         void save();
         void saveAs(const std::string& savePath);
         void help();
+        void exit();
 
         void print();
         void selectAttribute(const std::string& id, const std::string& key);
