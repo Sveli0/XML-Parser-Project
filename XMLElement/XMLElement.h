@@ -15,14 +15,14 @@ class XMLElement
         XMLElement(const std::string& name);
         ~XMLElement();
 
-        //Капсулация за полетата на елемента
+        //Капсулация на полетата на елемента
         std::string getTagName() const;
 
         std::string getId() const;
-        void setId(const std::string& id);
+        void setId(const std::string& newId);
 
         std::string getText() const;
-        void setText(const std::string& text);
+        void setText(const std::string& newText);
 
         //Управление на атрибутите на елемента
         const std::map<std::string, std::string> getAttributes() const;
@@ -30,6 +30,7 @@ class XMLElement
         void setAttribute(const std::string& key, const std::string& value);
         void deleteAttribute(const std::string& key);
 
+        //Подтагове
         void addChild(XMLElement* child);
         const std::vector<XMLElement*>& getChildren() const;
 };
