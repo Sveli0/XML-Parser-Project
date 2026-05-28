@@ -26,6 +26,7 @@ void Engine::start()
 
     std::string input;
     bool menu = true;
+    bool fileOpen = false;
 
     while(menu)
     {
@@ -35,28 +36,59 @@ void Engine::start()
         std::string command;
         ss >> command;
 
-        if (command == "open")
+        if (!fileOpen) //Тази част с по-кратко меню се пуска само ако не е отворен файл.
         {
-            std::string path;
-            ss >> path;
-
-            if (path.empty())
+            if (command == "open")
             {
-                std::cout << "Path is empty.";
-                break;
+                std::string path;
+                ss >> path;
+                if (path.empty())
+                {
+                    std::cout << "Path is empty." << std::endl;
+                    continue;
+                }
+                open(path);
+                fileOpen = true;
             }
-            open(path);
+            else if (command == "help")
+            {
+                help();
+            }
+            else if (command == "exit")
+            {
+                std::cout << "Exiting the program...";
+                menu = false;
+            }
+            else std::cout << "Invalid command. For command menu, use 'help'." << std::endl;
         }
-        else if (command == "help")
+        else //Тази част се пуска след като е отворен някакъв файл. Разделям менюто на две, преди и след отваряне на файл.
         {
-            help();
+            if (command == "close")
+            {
+                close();
+                fileOpen = false;
+            }
+            else if (command == "save")
+            {
+                save();
+            }
+            else if (command == "saveas")
+            {
+                std::string path;
+                ss >> path;
+                if (path.empty())
+                {
+                    std::cout << "Path is empty.";
+                    break;
+                }
+                saveAs(path);
+            }
+            else if (command == "help")
+            {
+                helpExtended();
+            }
+            else std::cout << "Invalid command. For command menu, use 'help'." << std::endl;
         }
-        else if (command == "exit")
-        {
-            std::cout << "Exiting the program...";
-            menu = false;
-        }
-        else std::cout << "Invalid command. For command menu, use 'help'." << std::endl;
     }
 }
 
@@ -72,61 +104,31 @@ void Engine::open(const std::string& filePath)
         root = new XMLElement("");
     }
     else std::cout << "Successfully opened " << filePath << std::endl;
-
-    std::string input;
-    bool menu = true;
-
-    while (menu)
-    {
-        //TODO: add rest of the commands
-        std::cout << "> ";
-        std::getline(std::cin, input);
-        std::stringstream ss(input);
-        std::string command;
-        ss >> command;
-
-        if (command == "close")
-        {
-            close();
-            menu = false;
-        }
-        else if (command == "save")
-        {
-            save();
-        }
-        else if (command == "saveas")
-        {
-            std::string path;
-            ss >> path;
-
-            if (path.empty())
-            {
-                std::cout << "Path is empty.";
-                break;
-            }
-            saveAs(path);
-        }
-        else if (command == "help")
-        {
-            helpExtended();
-        }
-        else std::cout << "Invalid command. For command menu, use 'help'." << std::endl;
-    }
 }
 
 void Engine::close()
 {
-
+    std::cout << "Successfully closed " << filePath << std::endl;
+    clearTree();
+    filePath = "";
 }
 
 void Engine::save()
 {
-
+    if (XMLParser::saveToFile(filePath, root))
+    {
+        std::cout << "Successfully saved " << filePath << std::endl;
+    }
+    else std::cout << "Something went wrong. File couldn't be saved." << std::endl;
 }
 
 void Engine::saveAs(const std::string& savePath)
 {
-
+    if (XMLParser::saveToFile(savePath, root))
+    {
+        std::cout << "Successfully saved " << filePath << std::endl;
+    }
+    else std::cout << "Something went wrong. File couldn't be saved." << std::endl;
 }
 
 void Engine::help()
