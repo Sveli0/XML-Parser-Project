@@ -23,7 +23,6 @@ class Engine
         void save();
         void saveAs(const std::string& savePath);
         void help();
-        void exit();
 
         void print();
         void selectAttribute(const std::string& id, const std::string& key);

@@ -33,28 +33,56 @@ void Engine::start()
 
         if (input == "open")
         {
-            /* code */
-        }
-        else if (input == "close")
-        {
-            /* code */
-        }
-        else if (input == "save")
-        {
-            /* code */
-        }
-        else if (input == "saveas")
-        {
-            /* code */
+
         }
         else if (input == "help")
         {
-            /* code */
+            
         }
         else if (input == "exit")
         {
-            /* code */
+            std::cout << "Exiting the program...";
+            menu = false;
         }
         else std::cout << "Invalid command. For command menu, use 'help'.";
     }
+}
+
+void Engine::open(const std::string& filePath)
+{
+    //TODO: add more commands, fix menu
+    std::string input = "";
+    if (input == "close")
+    {
+        /* code */
+    }
+    else if (input == "save")
+    {
+        /* code */
+    }
+    else if (input == "saveas")
+    {
+        /* code */
+    }
+        
+}
+
+void Engine::close()
+{
+
+}
+
+void Engine::save()
+{
+
+}
+
+void Engine::saveAs(const std::string& savePath)
+{
+
+}
+
+void Engine::help()
+{
+
 }
