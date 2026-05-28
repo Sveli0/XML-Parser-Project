@@ -1,3 +1,6 @@
+#ifndef XML_ELEMENT_H
+#define XML_ELEMENT_H
+
 #include <string>
 #include <vector>
 #include <map>
@@ -34,3 +37,5 @@ class XMLElement
         void addChild(XMLElement* child);
         const std::vector<XMLElement*>& getChildren() const;
 };
+
+#endif

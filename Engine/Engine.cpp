@@ -1,5 +1,5 @@
 #include "Engine.h"
-#include "XMLParser.h"
+#include "../XMLParser/XMLParser.h"
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -24,22 +24,33 @@ void Engine::start()
 {
     std::cout << "XML Parser has started. For command menu, use 'help'.";
 
-    std::string input = "";
+    std::string input;
     bool menu = true;
 
     while(menu)
     {
-        std::cin >> input;
+        std::cout << "> ";
+        std::getline(std::cin, input);
+        std::stringstream ss(input);
+        std::string command;
+        ss >> command;
 
-        if (input == "open")
+        if (command == "open")
         {
-
+            std::string path;
+            ss >> path;
+            if (path.empty())
+            {
+                std::cout << "Path is empty.";
+                break;
+            }
+            open(path);
         }
-        else if (input == "help")
+        else if (command == "help")
         {
-            
+            help();
         }
-        else if (input == "exit")
+        else if (command == "exit")
         {
             std::cout << "Exiting the program...";
             menu = false;
