@@ -64,7 +64,43 @@ void Engine::start()
         else //Тази част се пуска след като е отворен някакъв файл. Разделям менюто на две, преди и след отваряне на файл.
         {
             //TODO: rest of commands
-            if (command == "close")
+            if (command == "print")
+            {
+                //TODO:
+            }
+            else if (command == "select")
+            {
+                //TODO:
+            }
+            else if (command == "set")
+            {
+                //TODO:
+            }
+            else if (command == "children")
+            {
+                //TODO:
+            }
+            else if (command == "child")
+            {
+                //TODO:
+            }
+            else if (command == "text")
+            {
+                //TODO:
+            }
+            else if (command == "delete")
+            {
+                //TODO:
+            }
+            else if (command == "newchild")
+            {
+                //TODO:
+            }
+            else if (command == "xpath")
+            {
+                //TODO:
+            }
+            else if (command == "close")
             {
                 close();
                 fileOpen = false;
@@ -128,6 +164,7 @@ void Engine::saveAs(const std::string& savePath)
     if (XMLParser::saveToFile(savePath, root))
     {
         std::cout << "Successfully saved " << savePath << std::endl;
+        this -> filePath = savePath;
     }
     else std::cout << "Something went wrong. File couldn't be saved." << std::endl;
 }
