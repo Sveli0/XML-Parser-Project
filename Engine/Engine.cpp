@@ -70,7 +70,11 @@ void Engine::start()
             }
             else if (command == "select")
             {
-                //TODO:
+                std::string id;
+                std::string key;
+                ss >> id;
+                ss >> key;
+                selectAttribute(id, key);
             }
             else if (command == "set")
             {
@@ -129,6 +133,8 @@ void Engine::start()
     }
 }
 
+
+//Basic Commands Below
 void Engine::open(const std::string& filePath)
 {
     clearTree();
@@ -179,13 +185,25 @@ void Engine::help()
 
 void Engine::helpExtended()
 {
+    //TODO: add description to special commands
     std::cout << "The following commands are supported:" << std::endl;
+    std::cout << "print" << std::endl;
+    std::cout << "select <id> <key>" << std::endl;
+    std::cout << "set <id> <key> <value>"<< std::endl;
+    std::cout << "children <id>" << std::endl;
+    std::cout << "child <id> <n>" << std::endl;
+    std::cout << "text <id>" << std::endl;
+    std::cout << "delete <id> <key>" << std::endl;
+    std::cout << "newchild <id>" << std::endl;
+    std::cout << "xpath <XPath>" << std::endl;
     std::cout << "close\t\t\tcloses currently opened file" << std::endl;
     std::cout << "save\t\t\tsaves the currently open file" << std::endl;
     std::cout << "saveas <file>\t\tsaves the currently open file in <file>" << std::endl;
     std::cout << "help\t\t\tprints this information" << std::endl;
 }
 
+
+//XML Unique Commands Below
 void Engine::print()
 {
     //TODO: print in XML file style
