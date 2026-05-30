@@ -1,6 +1,7 @@
 #include "XMLParser.h"
-#include <fstream>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 XMLElement* XMLParser::parseFile(const std::string& filePath)
 {
@@ -11,8 +12,40 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
         return nullptr;
     }
     
-    //TODO:
-    XMLElement* parsedRoot = nullptr;
+    XMLElement* parsedRoot;
+    std::string line;
+    std::string word;
+
+    if (std::getline(file, line))
+    {
+        std::stringstream ss(line);
+        ss >> word;
+        word = word.substr(1);
+
+        if (word.back() == '>') word.pop_back();
+
+        parsedRoot = new XMLElement(word);
+
+        while (ss >> word)
+        {
+            std::string key, value;
+            if (word.back() == '>') word.pop_back();
+            key = word.substr(0, word.find('='));
+            value = word.substr(word.find('=') + 2);
+            value.pop_back();
+            parsedRoot -> setAttribute(key, value);
+        }
+
+        //TODO: check if root has ID. add incrementing auto IDs
+    }
+    
+
+    while (std::getline(file, line))
+    {
+        std::stringstream ss(line);
+    }
+    
+    
 
     file.close();
     return parsedRoot;
