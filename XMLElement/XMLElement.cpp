@@ -53,7 +53,8 @@ std::string XMLElement::getAttribute(const std::string& key) const
     {
         return it -> second;
     }
-    return "Attribute not found!";
+
+    return "";
 }
 
 void XMLElement::setAttribute(const std::string& key, const std::string& value)

@@ -70,15 +70,16 @@ void Engine::start()
             }
             else if (command == "select")
             {
-                std::string id;
-                std::string key;
-                ss >> id;
-                ss >> key;
+                //TODO: no id and/or no key should fail in all functions below
+                std::string id, key;
+                ss >> id >> key;
                 selectAttribute(id, key);
             }
             else if (command == "set")
             {
-                //TODO:
+                std::string id, key, value;
+                ss >> id >> key >> value;
+                setAttribute(id, key, value);
             }
             else if (command == "children")
             {
@@ -90,11 +91,15 @@ void Engine::start()
             }
             else if (command == "text")
             {
-                //TODO:
+                std::string id;
+                ss >> id;
+                showText(id);
             }
             else if (command == "delete")
             {
-                //TODO:
+                std::string id, key;
+                ss >> id >> key;
+                deleteAttribute(id, key);
             }
             else if (command == "newchild")
             {
@@ -223,17 +228,12 @@ void Engine::selectAttribute(const std::string& id, const std::string& key)
 
 void Engine::setAttribute(const std::string& id, const std::string& key, const std::string& value)
 {
-    //TODO:
-}
-
-void Engine::deleteAttribute(const std::string& id, const std::string& key)
-{
-    //TODO:
-}
-
-void Engine::showText(const std::string& id)
-{
-    //TODO:
+    XMLElement* el = findElementById(root, id);
+    if (el != nullptr)
+    {
+        el -> setAttribute(key, value);
+    }
+    else std::cout << "Element with ID: " << id << " not found." << std::endl;
 }
 
 void Engine::printChildren(const std::string& id)
@@ -244,6 +244,26 @@ void Engine::printChildren(const std::string& id)
 void Engine::printChild(const std::string& id, int n)
 {
     //TODO:
+}
+
+void Engine::showText(const std::string& id)
+{
+    XMLElement* el = findElementById(root, id);
+    if (el != nullptr)
+    {
+        std::cout << el -> getTagName() << ": " << el -> getText();
+    }
+    else std::cout << "Element with ID: " << id << " not found." << std::endl;
+}
+
+void Engine::deleteAttribute(const std::string& id, const std::string& key)
+{
+    XMLElement* el = findElementById(root, id);
+    if (el != nullptr)
+    {
+        el -> deleteAttribute(key);
+    }
+    else std::cout << "Element with ID: " << id << " not found." << std::endl;
 }
 
 void Engine::addNewChild(const std::string& id)
