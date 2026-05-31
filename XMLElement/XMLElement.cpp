@@ -10,9 +10,7 @@ XMLElement::XMLElement(const std::string& name)
 XMLElement::~XMLElement()
 {
     for (XMLElement* child : children)
-    {
         delete child;
-    }
 }
 
 std::string XMLElement::getTagName() const
@@ -50,9 +48,7 @@ std::string XMLElement::getAttribute(const std::string& key) const
     auto it = attributes.find(key);
 
     if (it != attributes.end())
-    {
         return it -> second;
-    }
 
     return "";
 }

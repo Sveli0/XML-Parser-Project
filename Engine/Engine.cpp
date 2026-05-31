@@ -51,9 +51,7 @@ void Engine::start()
                 fileOpen = true;
             }
             else if (command == "help")
-            {
                 help();
-            }
             else if (command == "exit")
             {
                 std::cout << "Exiting the program...";
@@ -115,9 +113,7 @@ void Engine::start()
                 fileOpen = false;
             }
             else if (command == "save")
-            {
                 save();
-            }
             else if (command == "saveas")
             {
                 std::string path;
@@ -130,9 +126,8 @@ void Engine::start()
                 saveAs(path);
             }
             else if (command == "help")
-            {
                 helpExtended();
-            }
+
             else std::cout << "Invalid command. For command menu, use 'help'." << std::endl;
         }
     }
@@ -220,7 +215,8 @@ void Engine::selectAttribute(const std::string& id, const std::string& key)
     if (el != nullptr)
     {
         std::string val = el -> getAttribute(key);
-        if (val != "") std::cout << key << ": " << val << std::endl;
+        if (val != "")
+            std::cout << key << ": " << val << std::endl;
         else std::cout << "Attribute " << key << " does not exist for element with ID: " << id << std::endl;
     }
     else std::cout << "Element with ID: " << id << " not found." << std::endl;
@@ -278,12 +274,15 @@ void Engine::executeXPathQuery(const std::string& xPathQuery)
 
 XMLElement* Engine::findElementById(XMLElement* current, const std::string& id)
 {
-    if (current == nullptr) return nullptr;
-    if (current -> getId() == id) return current;
+    if (current == nullptr)
+        return nullptr;
+    if (current -> getId() == id)
+        return current;
     for (XMLElement* child : current -> getChildren())
     {
         XMLElement* el = findElementById(child, id);
-        if (el != nullptr) return el;
+        if (el != nullptr)
+            return el;
     }
     return nullptr;
 }
