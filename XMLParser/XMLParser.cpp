@@ -36,7 +36,10 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
             parsedRoot -> setAttribute(key, value);
         }
 
-        //TODO: check if root has ID. add incrementing auto IDs
+        std::unordered_set<std::string> ids;
+        int autoIdCounter = 1;
+
+        setInitialID(parsedRoot, ids, autoIdCounter);
     }
     
 
@@ -67,4 +70,24 @@ bool XMLParser::saveToFile(const std::string& path, XMLElement* root)
     
     file.close();
     return true;
+}
+
+void setInitialID(XMLElement* element, std::unordered_set<std::string>& ids, int& autoIdCounter)
+{
+    std::string elId = element -> getAttribute("id");
+    bool duplicateId;
+
+    if (elId == "") element -> setId("auto_" + std::to_string(autoIdCounter++));
+    else
+    {
+        if (ids.find(elId) == ids.end())
+        {
+            element -> setId(elId);
+        }
+        else
+        {
+            elId = elId + "_";
+        }
+        ids.insert(elId);
+    }
 }
