@@ -5,6 +5,10 @@
 #include <stack>
 #include <vector>
 
+void setInitialID(XMLElement* element, std::vector<std::string>& ids, int& autoIdCounter);
+XMLElement* parseParent(std::string& line, std::vector<std::string>& ids, int& autoIdCounter);
+void parseAttributes(XMLElement* element, std::stringstream& ss);
+
 XMLElement* XMLParser::parseFile(const std::string& filePath)
 {
     std::ifstream file(filePath);
@@ -20,17 +24,7 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
 
     if (std::getline(file, line))
     {
-        std::stringstream ss(line);
-        ss >> tagName;
-        tagName = tagName.substr(1);
-
-        if (tagName.back() == '>')
-            tagName.pop_back();
-
-        parsedRoot = new XMLElement(tagName);
-
-        parseAttributes(parsedRoot, ss);
-        setInitialID(parsedRoot, ids, autoIdCounter);
+        parsedRoot = parseParent(line, ids, autoIdCounter);
     }
 
     std::stack <XMLElement*> parentsStack;
@@ -38,7 +32,11 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
 
     while (std::getline(file, line))
     {
-        if (line.substr(0, 2) == "</")
+        line.erase(0, line.find_first_not_of(" \t\r\n"));
+
+        if (line.empty())
+            continue;
+        else if (line.substr(0, 2) == "</")
         {
             if (!parentsStack.empty())
                 parentsStack.pop();
@@ -55,7 +53,7 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
 
             int startOfClosingTag = line.find("</");
 
-            if (startOfClosingTag - firstCloseBracket != 1)
+            if (startOfClosingTag - firstCloseBracket > 1)
             {
                 int textStart = firstCloseBracket + 1;
                 int textLength = startOfClosingTag - textStart;
@@ -72,11 +70,12 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
         }
         else if(line.substr(0, 1) == "<")
         {
-            
-        }
-        else if (line.empty())
-        {
-            continue;
+            XMLElement* child = parseParent(line, ids, autoIdCounter);
+
+            if (!parentsStack.empty())
+                parentsStack.top() -> addChild(child);
+
+            parentsStack.push(child);
         }
         //else throw exception
     }
@@ -110,7 +109,7 @@ void setInitialID(XMLElement* element, std::vector<std::string>& ids, int& autoI
     else
     {
         int duplicateCounter = 0;
-        for (std::string id : ids)
+        for (const std::string& id : ids)
             if (id == elId)
                 duplicateCounter++;
         if (duplicateCounter == 0)
@@ -122,6 +121,24 @@ void setInitialID(XMLElement* element, std::vector<std::string>& ids, int& autoI
         }
         ids.push_back(elId);
     }
+}
+
+XMLElement* parseParent(std::string& line, std::vector<std::string>& ids, int& autoIdCounter)
+{
+    std::stringstream ss(line);
+    std::string tagName;
+    ss >> tagName;
+    tagName = tagName.substr(1);
+
+    if (tagName.back() == '>')
+        tagName.pop_back();
+
+    XMLElement* element = new XMLElement(tagName);
+
+    parseAttributes(element, ss);
+    setInitialID(element, ids, autoIdCounter);
+
+    return element;
 }
 
 void parseAttributes(XMLElement* element, std::stringstream& ss)
