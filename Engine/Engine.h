@@ -25,13 +25,13 @@ class Engine
         void help();
         void helpExtended();
 
-        void print(XMLElement*, int depth);
+        void print(const XMLElement*, const int depth);
         void selectAttribute(const std::string& id, const std::string& key);
         void setAttribute(const std::string& id, const std::string& key, const std::string& value);
         void deleteAttribute(const std::string& id, const std::string& key);
         void showText(const std::string& id);
         void printChildren(const std::string& id);
-        void printChild(const std::string& id, int n);
+        void printChild(const std::string& id, const int n);
         void addNewChild(const std::string& id, const std::string& tagName, const std::string& newChildId);
-        void executeXPathQuery(const std::string& xPathQuery);
+        void executeXPathQuery(const XMLElement* root, std::string& xPathQuery);
 };

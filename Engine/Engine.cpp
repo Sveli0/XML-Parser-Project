@@ -215,7 +215,7 @@ void Engine::helpExtended()
 
 
 //XML Unique Commands Below
-void Engine::print(XMLElement* element, int depth)
+void Engine::print(const XMLElement* element, const int depth)
 {
     std::string tabulation(depth * 4, ' ');
     std::cout << tabulation;
@@ -274,7 +274,7 @@ void Engine::printChildren(const std::string& id)
     print(element, 0);
 }
 
-void Engine::printChild(const std::string& id, int n)
+void Engine::printChild(const std::string& id, const int n)
 {
     XMLElement* element = findElementById(root, id);
     XMLElement* child = element -> getChildren()[n - 1];
@@ -311,9 +311,50 @@ void Engine::addNewChild(const std::string& id, const std::string& tagName, cons
     element -> addChild(child);
 }
 
-void Engine::executeXPathQuery(const std::string& xPathQuery)
+void Engine::executeXPathQuery(const XMLElement* root, std::string& xPathQuery)
 {
-    //TODO:
+    std::string tagName;
+    int linePos = xPathQuery.find("/");
+
+    if (linePos == std::string::npos)
+    {
+        if (xPathQuery.find("@") != std::string::npos)
+        {
+            /* code */
+        }
+        else if (xPathQuery.find("=") != std::string::npos)
+        {
+            /* code */
+        }
+        else if (xPathQuery.find("[") != std::string::npos)
+        {
+            /* code */
+        }
+        else
+        {
+            int counter = 1;
+
+            for(XMLElement* element : root -> getChildren())
+            {
+                if(element -> getTagName() == xPathQuery)
+                {
+                    std::cout << counter++ << ". " << element -> getText();
+                }
+            }
+        }
+    }
+    else
+    {
+        tagName = xPathQuery.substr(0, linePos);
+        xPathQuery = xPathQuery.substr(linePos + 1);
+        for(XMLElement* element : root -> getChildren())
+        {
+            if (element -> getTagName() == tagName)
+            {
+                executeXPathQuery(element, xPathQuery);
+            }
+        }
+    }
 }
 
 XMLElement* Engine::findElementById(XMLElement* current, const std::string& id)
