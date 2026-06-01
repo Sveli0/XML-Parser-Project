@@ -117,14 +117,14 @@ void setInitialID(XMLElement* element, std::vector<std::string>& ids, int& autoI
         for (const std::string& id : ids)
             if (id == elId)
                 duplicateCounter++;
-        if (duplicateCounter == 0)
-            element -> setId(elId);
-        else
+        ids.push_back(elId);
+
+        if (duplicateCounter > 0)
         {
             elId += "_" + std::to_string(duplicateCounter);
-            element -> setId(elId);
+            element -> setAttribute("id", elId);
         }
-        ids.push_back(elId);
+        element -> setId(elId);
     }
 }
 

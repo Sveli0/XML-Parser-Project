@@ -64,6 +64,7 @@ void Engine::start()
             //TODO: rest of commands
             //TODO: да опростя полетата
             //TODO: да добавя описания
+            //TODO: да добавя съобщения за успех и неуспех при избор на команда
             if (command == "print")
             {
                 print(root, 0);
@@ -89,7 +90,10 @@ void Engine::start()
             }
             else if (command == "child")
             {
-                //TODO:
+                std::string id;
+                int n;
+                ss >> id >> n;
+                printChild(id, n);
             }
             else if (command == "text")
             {
@@ -105,7 +109,9 @@ void Engine::start()
             }
             else if (command == "newchild")
             {
-                //TODO:
+                std::string id, tagName, newChildId;
+                ss >> id >> tagName >> newChildId;
+                addNewChild(id, tagName, newChildId);
             }
             else if (command == "xpath")
             {
@@ -198,7 +204,7 @@ void Engine::helpExtended()
     std::cout << "child <id> <n>" << std::endl;
     std::cout << "text <id>" << std::endl;
     std::cout << "delete <id> <key>" << std::endl;
-    std::cout << "newchild <id>" << std::endl;
+    std::cout << "newchild <id> <newTag> <newId>" << std::endl;
     std::cout << "xpath <XPath>" << std::endl;
     std::cout << "close\t\t\tcloses currently opened file" << std::endl;
     std::cout << "save\t\t\tsaves the currently open file" << std::endl;
@@ -269,7 +275,10 @@ void Engine::printChildren(const std::string& id)
 
 void Engine::printChild(const std::string& id, int n)
 {
-    //TODO:
+    XMLElement* element = findElementById(root, id);
+    XMLElement* child = element -> getChildren()[n - 1];
+
+    print(child, 0);
 }
 
 void Engine::showText(const std::string& id)
@@ -292,9 +301,13 @@ void Engine::deleteAttribute(const std::string& id, const std::string& key)
     else std::cout << "Element with ID: " << id << " not found." << std::endl;
 }
 
-void Engine::addNewChild(const std::string& id)
+void Engine::addNewChild(const std::string& id, const std::string& tagName, const std::string& newChildId)
 {
-    //TODO:
+    XMLElement* element = findElementById(root, id);
+    XMLElement* child = new XMLElement(tagName);
+    child -> setId(newChildId);
+    child -> setAttribute("id", newChildId);
+    element -> addChild(child);
 }
 
 void Engine::executeXPathQuery(const std::string& xPathQuery)

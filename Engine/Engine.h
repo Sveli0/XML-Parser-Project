@@ -32,6 +32,6 @@ class Engine
         void showText(const std::string& id);
         void printChildren(const std::string& id);
         void printChild(const std::string& id, int n);
-        void addNewChild(const std::string& id);
+        void addNewChild(const std::string& id, const std::string& tagName, const std::string& newChildId);
         void executeXPathQuery(const std::string& xPathQuery);
 };
