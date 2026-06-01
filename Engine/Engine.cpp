@@ -115,7 +115,9 @@ void Engine::start()
             }
             else if (command == "xpath")
             {
-                //TODO:
+                std::string query;
+                ss >> query;
+                executeXPathQuery(root, query);
             }
             else if (command == "close")
             {
@@ -346,13 +348,8 @@ void Engine::executeXPathQuery(const XMLElement* root, std::string& xPathQuery)
         {
             std::string attribute = currentStep.substr(atPos + 1);
 
-            for (XMLElement* element : root -> getChildren())
-            {
-                if (element -> getAttributes().count(attribute) > 0)
-                {
-                    std::cout << element -> getAttribute(attribute) << std::endl;
-                }
-            }
+            if (root -> getAttributes().count(attribute) > 0)
+                std::cout << root -> getAttribute(attribute) << std::endl;
         }
         else if (bracketStart != std::string::npos)
         {
@@ -382,12 +379,67 @@ void Engine::executeXPathQuery(const XMLElement* root, std::string& xPathQuery)
                     std::cout << element -> getText() << std::endl;
             }
         }
-        
-        
-        
     }
-    
-    
+    else
+    {
+        int equalPos = currentStep.find("=");
+
+        if (bracketStart != std::string::npos && equalPos != std::string::npos)
+        {
+            int bracketEnd = currentStep.find("]");
+            std::string tag = currentStep.substr(bracketStart + 1, equalPos - bracketStart - 1);
+            std::string value = currentStep.substr(equalPos + 1, bracketEnd - equalPos - 1);
+
+            if (!value.empty() && value.front() == '"')
+                value.erase(0, 1);
+            if (!value.empty() && value.back() == '"')
+                value.pop_back();
+
+            for(XMLElement* element : root -> getChildren())
+            {
+                if (element -> getTagName() == tagName)
+                {
+                    bool conditionMet = false;
+
+                    for(XMLElement* elChild : element -> getChildren())
+                    {
+                        if (elChild -> getTagName() == tag && elChild -> getText() == value)
+                        {
+                            conditionMet = true;
+                            break;
+                        }
+                    }
+
+                    if (conditionMet)
+                        executeXPathQuery(element, nextStep);
+                }
+            }
+        }
+        else
+        {
+            int atPos = currentStep.find("@");
+
+            bool hasFilter = (bracketStart != std::string::npos && atPos != std::string::npos);
+            std::string filter = "";
+
+            if (hasFilter)
+            {
+                filter = currentStep.substr(atPos + 1);
+                filter.pop_back();
+            }
+
+            for (XMLElement* element : root -> getChildren())
+            {
+                if (element -> getTagName() == tagName)
+                {
+                    if (hasFilter && element -> getAttributes().count(filter) == 0)
+                        continue;
+                    
+                    executeXPathQuery(element, nextStep);
+                }
+            }
+        }
+    }
 }
 
 XMLElement* Engine::findElementById(XMLElement* current, const std::string& id)
