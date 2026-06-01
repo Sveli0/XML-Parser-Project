@@ -24,6 +24,7 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
 
     if (std::getline(file, line))
     {
+        line.erase(0, line.find_first_not_of(" \t\r\n"));
         parsedRoot = parseParent(line, ids, autoIdCounter);
     }
 
@@ -61,9 +62,9 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
                 std::string text = line.substr(textStart, textLength);
                 child -> setText(text);
             }
-                
-            setInitialID(child, ids, autoIdCounter);
+            
             parseAttributes(child, openingTagStream);
+            setInitialID(child, ids, autoIdCounter);
 
             if (!parentsStack.empty())
                 parentsStack.top() -> addChild(child);

@@ -62,9 +62,11 @@ void Engine::start()
         else //Тази част се пуска след като е отворен някакъв файл. Разделям менюто на две, преди и след отваряне на файл.
         {
             //TODO: rest of commands
+            //TODO: да опростя полетата
+            //TODO: да добавя описания
             if (command == "print")
             {
-                //TODO:
+                print(root, 0);
             }
             else if (command == "select")
             {
@@ -81,7 +83,9 @@ void Engine::start()
             }
             else if (command == "children")
             {
-                //TODO:
+                std::string id;
+                ss >> id;
+                printChildren(id);
             }
             else if (command == "child")
             {
@@ -146,7 +150,7 @@ void Engine::open(const std::string& filePath)
         std::cout << "File " << filePath << " not found. Creating new file." << std::endl;
         root = new XMLElement("");
     }
-    else std::cout << "Successfully opened " << filePath << std::endl;
+    else std::cout << "Successfully opened \"" << filePath << "\"" << std::endl;
 }
 
 void Engine::close()
@@ -204,9 +208,31 @@ void Engine::helpExtended()
 
 
 //XML Unique Commands Below
-void Engine::print()
+void Engine::print(XMLElement* element, int depth)
 {
-    //TODO: print in XML file style
+    std::string tabulation(depth * 4, ' ');
+    std::cout << tabulation;
+    std::cout << "<" + element -> getTagName();
+
+    for (auto attribute : element -> getAttributes())
+        std::cout << " " + attribute.first + "=\"" + attribute.second + "\"";
+    std::cout << ">";
+
+    if (element -> getChildren().size() > 0)
+    {
+        std::cout << std::endl;
+
+        for (XMLElement* child : element -> getChildren())
+            print(child, depth + 1);
+
+        std::cout << tabulation;
+    }
+    else
+    {
+        std::cout << element -> getText();
+    }
+
+    std::cout << "</" + element -> getTagName() + ">" << std::endl;
 }
 
 void Engine::selectAttribute(const std::string& id, const std::string& key)
@@ -228,13 +254,17 @@ void Engine::setAttribute(const std::string& id, const std::string& key, const s
     if (el != nullptr)
     {
         el -> setAttribute(key, value);
+        if(key == "id")
+            el -> setId(value);
     }
     else std::cout << "Element with ID: " << id << " not found." << std::endl;
 }
 
 void Engine::printChildren(const std::string& id)
 {
-    //TODO:
+    XMLElement* element = findElementById(root, id);
+
+    print(element, 0);
 }
 
 void Engine::printChild(const std::string& id, int n)

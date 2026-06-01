@@ -25,7 +25,7 @@ class Engine
         void help();
         void helpExtended();
 
-        void print();
+        void print(XMLElement*, int depth);
         void selectAttribute(const std::string& id, const std::string& key);
         void setAttribute(const std::string& id, const std::string& key, const std::string& value);
         void deleteAttribute(const std::string& id, const std::string& key);
