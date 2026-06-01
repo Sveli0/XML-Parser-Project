@@ -8,6 +8,7 @@
 void setInitialID(XMLElement* element, std::vector<std::string>& ids, int& autoIdCounter);
 XMLElement* parseParent(std::string& line, std::vector<std::string>& ids, int& autoIdCounter);
 void parseAttributes(XMLElement* element, std::stringstream& ss);
+void print(std::ofstream& file, XMLElement* element, int depth);
 
 XMLElement* XMLParser::parseFile(const std::string& filePath)
 {
@@ -94,11 +95,40 @@ bool XMLParser::saveToFile(const std::string& path, XMLElement* root)
     
     if (root != nullptr)
     {
-        //TODO: Запиши таговете от дървото във файла
+        print(file, root, 0);
     }
     
     file.close();
     return true;
+}
+
+void print(std::ofstream& file, XMLElement* element, int depth)
+{
+    std::string tabulation(depth * 4, ' ');
+    file << tabulation;
+    file << "<" + element -> getTagName();
+
+    for (auto attribute : element -> getAttributes())
+        file << " " + attribute.first + "=\"" + attribute.second + "\"";
+    file << ">";
+
+    if (element -> getChildren().size() > 0)
+    {
+        file << std::endl;
+
+        for (XMLElement* child : element -> getChildren())
+            print(file, child, depth + 1);
+
+        file << tabulation;
+    }
+    else
+    {
+        file << element -> getText();
+    }
+
+    file << "</" + element -> getTagName() + ">";
+
+    file << std::endl;
 }
 
 void setInitialID(XMLElement* element, std::vector<std::string>& ids, int& autoIdCounter)

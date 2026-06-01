@@ -147,22 +147,23 @@ void Engine::start()
 //Basic Commands Below
 void Engine::open(const std::string& filePath)
 {
-    clearTree();
     this -> filePath = filePath;
     root = XMLParser::parseFile(filePath);
 
     if (root == nullptr)
     {
         std::cout << "File " << filePath << " not found. Creating new file." << std::endl;
-        root = new XMLElement("");
+        root = new XMLElement("root");
+        root -> setId("rootID");
+        root -> setAttribute("id", "rootID");
     }
     else std::cout << "Successfully opened \"" << filePath << "\"" << std::endl;
 }
 
 void Engine::close()
 {
-    std::cout << "Successfully closed " << filePath << std::endl;
     clearTree();
+    std::cout << "Successfully closed \"" << filePath << "\"" << std::endl;
     filePath = "";
 }
 
