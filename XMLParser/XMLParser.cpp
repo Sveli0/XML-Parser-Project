@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <stack>
 #include <vector>
 
 XMLElement* XMLParser::parseFile(const std::string& filePath)
@@ -45,10 +46,29 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
         setInitialID(parsedRoot, ids, autoIdCounter);
     }
 
+    std::stack <XMLElement*> parentsStack;
+    parentsStack.push(parsedRoot);
+
     while (std::getline(file, line))
     {
         std::stringstream ss(line);
-        //finish this
+        ss >> word;
+        if (word.substr(0, 2) == "</")
+        {
+            if (!parentsStack.empty())
+                parentsStack.pop();
+            else if (word.substr(0, 1) == "<" && line.find("</") != std::string::npos)
+            {
+                int firstCloseBracket = line.find('>');
+                int startOfClosingBracket = line.find("</");
+                int textLength = startOfClosingBracket - firstCloseBracket - 1;
+                std::string tagName = line.substr(1, firstCloseBracket - 1);
+                XMLElement* child = new XMLElement(tagName);
+                std::string text = line.substr(firstCloseBracket + 1, textLength);
+            }
+            
+        }
+        
     }
 
     file.close();
@@ -81,7 +101,8 @@ void setInitialID(XMLElement* element, std::vector<std::string>& ids, int& autoI
     {
         int duplicateCounter = 0;
         for (std::string id : ids)
-            if (id == elId) duplicateCounter++;
+            if (id == elId)
+                duplicateCounter++;
         if (duplicateCounter = 0)
             element -> setId(elId);
         else
