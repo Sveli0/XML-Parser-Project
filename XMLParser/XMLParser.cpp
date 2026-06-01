@@ -14,35 +14,22 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
 
     XMLElement* parsedRoot;
     std::string line;
-    std::string word;
+    std::string tagName;
+    std::vector<std::string> ids;
+    int autoIdCounter = 1;
 
     if (std::getline(file, line))
     {
         std::stringstream ss(line);
-        ss >> word;
-        word = word.substr(1);
+        ss >> tagName;
+        tagName = tagName.substr(1);
 
-        if (word.back() == '>')
-            word.pop_back();
+        if (tagName.back() == '>')
+            tagName.pop_back();
 
-        parsedRoot = new XMLElement(word);
+        parsedRoot = new XMLElement(tagName);
 
-        while (ss >> word)
-        {
-            if (word.back() == '>')
-                word.pop_back();
-
-            std::string key, value;
-            key = word.substr(0, word.find('='));
-            value = word.substr(word.find('=') + 2);
-            value.pop_back();
-
-            parsedRoot -> setAttribute(key, value);
-        }
-
-        std::vector<std::string> ids;
-        int autoIdCounter = 1;
-
+        parseAttributes(parsedRoot, ss);
         setInitialID(parsedRoot, ids, autoIdCounter);
     }
 
@@ -51,24 +38,47 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
 
     while (std::getline(file, line))
     {
-        std::stringstream ss(line);
-        ss >> word;
-        if (word.substr(0, 2) == "</")
+        if (line.substr(0, 2) == "</")
         {
             if (!parentsStack.empty())
                 parentsStack.pop();
-            else if (word.substr(0, 1) == "<" && line.find("</") != std::string::npos)
+        }
+        else if (line.substr(0, 1) == "<" && line.find("</") != std::string::npos)
+        {
+            int firstCloseBracket = line.find('>');
+            std::string openingTag = line.substr(1, firstCloseBracket - 1);
+            std::stringstream openingTagStream(openingTag);
+                
+            std::string tagName;
+            openingTagStream >> tagName;
+            XMLElement* child = new XMLElement(tagName);
+
+            int startOfClosingTag = line.find("</");
+
+            if (startOfClosingTag - firstCloseBracket != 1)
             {
-                int firstCloseBracket = line.find('>');
-                int startOfClosingBracket = line.find("</");
-                int textLength = startOfClosingBracket - firstCloseBracket - 1;
-                std::string tagName = line.substr(1, firstCloseBracket - 1);
-                XMLElement* child = new XMLElement(tagName);
-                std::string text = line.substr(firstCloseBracket + 1, textLength);
+                int textStart = firstCloseBracket + 1;
+                int textLength = startOfClosingTag - textStart;
+                    
+                std::string text = line.substr(textStart, textLength);
+                child -> setText(text);
             }
+                
+            setInitialID(child, ids, autoIdCounter);
+            parseAttributes(child, openingTagStream);
+
+            if (!parentsStack.empty())
+                parentsStack.top() -> addChild(child);
+        }
+        else if(line.substr(0, 1) == "<")
+        {
             
         }
-        
+        else if (line.empty())
+        {
+            continue;
+        }
+        //else throw exception
     }
 
     file.close();
@@ -103,7 +113,7 @@ void setInitialID(XMLElement* element, std::vector<std::string>& ids, int& autoI
         for (std::string id : ids)
             if (id == elId)
                 duplicateCounter++;
-        if (duplicateCounter = 0)
+        if (duplicateCounter == 0)
             element -> setId(elId);
         else
         {
@@ -111,5 +121,22 @@ void setInitialID(XMLElement* element, std::vector<std::string>& ids, int& autoI
             element -> setId(elId);
         }
         ids.push_back(elId);
+    }
+}
+
+void parseAttributes(XMLElement* element, std::stringstream& ss)
+{
+    std::string word;
+    while (ss >> word)
+    {
+        if (word.back() == '>')
+            word.pop_back();
+
+        std::string key, value;
+        key = word.substr(0, word.find('='));
+        value = word.substr(word.find('=') + 2);
+        value.pop_back();
+
+        element -> setAttribute(key, value);
     }
 }
