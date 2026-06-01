@@ -38,7 +38,7 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
 
         if (line.empty())
             continue;
-        else if (line.substr(0, 2) == "</")
+        else if (line.size() >= 2 && line.substr(0, 2) == "</")
         {
             if (!parentsStack.empty())
                 parentsStack.pop();
