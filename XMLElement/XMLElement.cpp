@@ -25,7 +25,7 @@ std::string XMLElement::getId() const
 
 void XMLElement::setId(const std::string& newId)
 {
-    this -> id = id;
+    this -> id = newId;
 }
 
 std::string XMLElement::getText() const

@@ -1,6 +1,5 @@
 #include "../XMLElement/XMLElement.h"
 #include <string>
-#include <map>
 
 class Engine
 {

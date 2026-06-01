@@ -247,7 +247,7 @@ void Engine::showText(const std::string& id)
     XMLElement* el = findElementById(root, id);
     if (el != nullptr)
     {
-        std::cout << el -> getTagName() << ": " << el -> getText();
+        std::cout << el -> getTagName() << ": " << el -> getText() << std::endl;
     }
     else std::cout << "Element with ID: " << id << " not found." << std::endl;
 }

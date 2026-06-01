@@ -105,7 +105,11 @@ void setInitialID(XMLElement* element, std::vector<std::string>& ids, int& autoI
     std::string elId = element -> getAttribute("id");
 
     if (elId == "")
-        element -> setId("auto_" + std::to_string(autoIdCounter++));
+    {
+        elId = "auto_" + std::to_string(autoIdCounter++);
+        element -> setId(elId);
+        element -> setAttribute("id", elId);
+    }
     else
     {
         int duplicateCounter = 0;
