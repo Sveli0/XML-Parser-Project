@@ -26,7 +26,7 @@ class Engine
         void printChildren(const std::string& id);
         void printChild(const std::string& id, const int n);
         void addNewChild(const std::string& id, const std::string& tagName, const std::string& newChildId);
-        void executeXPathQuery(const XMLElement* root, std::string& xPathQuery);
+        void executeXPathQuery(XMLElement* root, std::string xPathQuery);
 
     public:
         Engine();

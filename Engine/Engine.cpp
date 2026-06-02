@@ -2,7 +2,6 @@
 #include "../XMLParser/XMLParser.h"
 #include <iostream>
 #include <sstream>
-#include <fstream>
 
 Engine::Engine()
 {
@@ -44,7 +43,7 @@ void Engine::start()
                 ss >> path;
                 if (path.empty())
                 {
-                    std::cout << "Path is empty." << std::endl;
+                    std::cout << "Path cannot be empty!" << std::endl;
                     continue;
                 }
                 open(path);
@@ -61,63 +60,70 @@ void Engine::start()
         }
         else //Тази част се пуска след като е отворен някакъв файл. Разделям менюто на две, преди и след отваряне на файл.
         {
-            //TODO: rest of commands
-            //TODO: да опростя полетата
-            //TODO: да добавя описания
-            //TODO: да добавя съобщения за успех и неуспех при избор на команда
+            std::string id, key;
             if (command == "print")
             {
                 print(root, 0);
             }
             else if (command == "select")
             {
-                //TODO: no id and/or no key should fail in all functions below
-                std::string id, key;
                 ss >> id >> key;
-                selectAttribute(id, key);
+                if (id.empty() || key.empty())
+                    std::cout << "'ID' and/or 'key' fields cannot be empty!" << std::endl;
+                else selectAttribute(id, key);
             }
             else if (command == "set")
             {
-                std::string id, key, value;
+                std::string value;
                 ss >> id >> key >> value;
-                setAttribute(id, key, value);
+                if (id.empty() || key.empty() || value.empty())
+                    std::cout << "'ID', 'key' and/or 'value' fields cannot be empty!" << std::endl;
+                else setAttribute(id, key, value);
             }
             else if (command == "children")
             {
-                std::string id;
                 ss >> id;
-                printChildren(id);
+                if (id.empty())
+                    std::cout << "'ID' cannot be empty!" << std::endl;
+                else printChildren(id);
             }
             else if (command == "child")
             {
-                std::string id;
-                int n;
+                int n = -1;
                 ss >> id >> n;
-                printChild(id, n);
+                if (id.empty() || n < 1)
+                    std::cout << "'ID' cannot be empty and/or <n> cannot be empty or negative!" << std::endl;
+                else printChild(id, n);
             }
             else if (command == "text")
             {
-                std::string id;
                 ss >> id;
-                showText(id);
+                if (id.empty())
+                    std::cout << "'ID' cannot be empty!" << std::endl;
+                else showText(id);
             }
             else if (command == "delete")
             {
-                std::string id, key;
                 ss >> id >> key;
-                deleteAttribute(id, key);
+                if (id.empty() || key.empty())
+                    std::cout << "'ID' and/or 'key' fields cannot be empty!" << std::endl;
+                else deleteAttribute(id, key);
             }
             else if (command == "newchild")
             {
-                std::string id, tagName, newChildId;
+                std::string tagName, newChildId;
                 ss >> id >> tagName >> newChildId;
-                addNewChild(id, tagName, newChildId);
+                if (id.empty() || tagName.empty() || newChildId.empty())
+                    std::cout << "'ID', 'newTag' and/or 'newId' fields cannot be empty!" << std::endl;
+                else addNewChild(id, tagName, newChildId);
             }
             else if (command == "xpath")
             {
                 std::string query;
                 ss >> query;
-                executeXPathQuery(root, query);
+                if (query.empty())
+                    std::cout << "Query cannot be empty!" << std::endl;
+                else executeXPathQuery(root, query);
             }
             else if (command == "close")
             {
@@ -131,11 +137,8 @@ void Engine::start()
                 std::string path;
                 ss >> path;
                 if (path.empty())
-                {
-                    std::cout << "Path is empty." << std::endl;
-                    continue;;
-                }
-                saveAs(path);
+                    std::cout << "Path cannot be empty!" << std::endl;
+                else saveAs(path);
             }
             else if (command == "help")
                 helpExtended();
@@ -198,21 +201,20 @@ void Engine::help()
 
 void Engine::helpExtended()
 {
-    //TODO: add description to special commands
     std::cout << "The following commands are supported:" << std::endl;
-    std::cout << "print" << std::endl;
-    std::cout << "select <id> <key>" << std::endl;
-    std::cout << "set <id> <key> <value>"<< std::endl;
-    std::cout << "children <id>" << std::endl;
-    std::cout << "child <id> <n>" << std::endl;
-    std::cout << "text <id>" << std::endl;
-    std::cout << "delete <id> <key>" << std::endl;
-    std::cout << "newchild <id> <newTag> <newId>" << std::endl;
-    std::cout << "xpath <XPath>" << std::endl;
-    std::cout << "close\t\t\tcloses currently opened file" << std::endl;
-    std::cout << "save\t\t\tsaves the currently open file" << std::endl;
-    std::cout << "saveas <file>\t\tsaves the currently open file in <file>" << std::endl;
-    std::cout << "help\t\t\tprints this information" << std::endl;
+    std::cout << "print\t\t\t\t\tprints the file" << std::endl;
+    std::cout << "select <id> <key>\t\t\tprints attribute <key> of element with <id>" << std::endl;
+    std::cout << "set <id> <key> <value>\t\t\tsets the value of attribute <key> for element with <id>"<< std::endl;
+    std::cout << "children <id>\t\t\t\tprints childeren of element with <id>" << std::endl;
+    std::cout << "child <id> <n>\t\t\t\tprints ancestor <n> of element with <id>" << std::endl;
+    std::cout << "text <id>\t\t\t\tshows text of element with <id>" << std::endl;
+    std::cout << "delete <id> <key>\t\t\tdeletes attribute <key> of element with <id>" << std::endl;
+    std::cout << "newchild <id> <newTag> <newId>\t\tcreates a new child for parent with <id>" << std::endl;
+    std::cout << "xpath <XPath>\t\t\t\textracts an xpath query" << std::endl;
+    std::cout << "close\t\t\t\t\tcloses currently opened file" << std::endl;
+    std::cout << "save\t\t\t\t\tsaves the currently open file" << std::endl;
+    std::cout << "saveas <file>\t\t\t\tsaves the currently open file in <file>" << std::endl;
+    std::cout << "help\t\t\t\t\tprints this information" << std::endl;
 }
 
 
@@ -257,12 +259,22 @@ void Engine::selectAttribute(const std::string& id, const std::string& key)
 
 void Engine::setAttribute(const std::string& id, const std::string& key, const std::string& value)
 {
-    XMLElement* el = findElementById(root, id);
-    if (el != nullptr)
+    XMLElement* element = findElementById(root, id);
+    
+    if (element != nullptr)
     {
-        el -> setAttribute(key, value);
         if(key == "id")
-            el -> setId(value);
+        {
+            XMLElement* duplicate = findElementById(root, value);
+            if (duplicate != nullptr)
+            {
+                std::cout << "Cannot set attribute <id> to " << value << " because it isn't unique!" << std::endl;
+                return;
+            }
+            element -> setId(value);
+        }
+        element -> setAttribute(key, value);
+        std::cout << "Attribute successfully set!" << std::endl;
     }
     else std::cout << "Element with ID: " << id << " not found." << std::endl;
 }
@@ -271,23 +283,51 @@ void Engine::printChildren(const std::string& id)
 {
     XMLElement* element = findElementById(root, id);
 
-    print(element, 0);
+    if (element != nullptr)
+        print(element, 0);
+    else std::cout << "Element with ID: " << id << " not found." << std::endl;
 }
 
 void Engine::printChild(const std::string& id, const int n)
 {
     XMLElement* element = findElementById(root, id);
-    XMLElement* child = element -> getChildren()[n - 1];
+    XMLElement* child = nullptr;
 
-    print(child, 0);
+    if (element != nullptr)
+    {
+        if (n <= element -> getChildren().size())
+        {
+            child = element -> getChildren()[n - 1];
+                print(child, 0);
+        }
+        else std::cout << "Element with ID: " << id << " does not have a descendant number <n>." << std::endl;
+    }
+    else std::cout << "Element with ID: " << id << " not found." << std::endl;
 }
 
 void Engine::showText(const std::string& id)
 {
-    XMLElement* el = findElementById(root, id);
-    if (el != nullptr)
+    XMLElement* element = findElementById(root, id);
+    if (element != nullptr)
     {
-        std::cout << el -> getTagName() << ": " << el -> getText() << std::endl;
+        std::cout << element -> getTagName() << ": " << element -> getText() << std::endl;
+        std::cout << "Do you want to change the text? 'Y/N'" << std::endl << "> ";
+        std::string input;
+        while (true)
+        {
+            std::getline(std::cin, input);
+            if (input == "Y")
+            {
+                std::cout << "Enter new text:" << std::endl << "> ";
+                std::getline(std::cin, input);
+                element -> setText(input);
+                std::cout << "Successfully changed the text!" << std::endl;
+                return;
+            }
+            else if (input == "N")
+                return;
+            else std::cout << "Wrong input!" << std::endl << "> ";
+        }       
     }
     else std::cout << "Element with ID: " << id << " not found." << std::endl;
 }
@@ -297,21 +337,38 @@ void Engine::deleteAttribute(const std::string& id, const std::string& key)
     XMLElement* el = findElementById(root, id);
     if (el != nullptr)
     {
-        el -> deleteAttribute(key);
+        if (el -> getAttribute(key) != "")
+        {
+            el -> deleteAttribute(key);
+            std::cout << "Successfully deleted attribute!" << std::endl;
+        }
+        else std::cout << "Attribute " << key << " does not exist for element with ID: " << id << std::endl;
     }
     else std::cout << "Element with ID: " << id << " not found." << std::endl;
 }
 
 void Engine::addNewChild(const std::string& id, const std::string& tagName, const std::string& newChildId)
 {
+    XMLElement* duplicate = findElementById(root, newChildId);
+    if (duplicate != nullptr)
+    {
+        std::cout << "Cannot set <id> to " << newChildId << " because it isn't unique!" << std::endl;
+        return;
+    }
+
     XMLElement* element = findElementById(root, id);
-    XMLElement* child = new XMLElement(tagName);
-    child -> setId(newChildId);
-    child -> setAttribute("id", newChildId);
-    element -> addChild(child);
+    if (element != nullptr)
+    {
+        XMLElement* child = new XMLElement(tagName);
+        child -> setId(newChildId);
+        child -> setAttribute("id", newChildId);
+        element -> addChild(child);
+        std::cout << "Successfully added new child!" << std::endl;
+    }
+    else std::cout << "Element with ID: " << id << " not found." << std::endl;
 }
 
-void Engine::executeXPathQuery(const XMLElement* root, std::string& xPathQuery)
+void Engine::executeXPathQuery(XMLElement* root, std::string xPathQuery)
 {
     if (root == nullptr || xPathQuery.empty())
         return;
@@ -395,19 +452,33 @@ void Engine::executeXPathQuery(const XMLElement* root, std::string& xPathQuery)
             if (!value.empty() && value.back() == '"')
                 value.pop_back();
 
+            bool isFilter = (tag.front() == '@');
+
             for(XMLElement* element : root -> getChildren())
             {
                 if (element -> getTagName() == tagName)
                 {
                     bool conditionMet = false;
 
-                    for(XMLElement* elChild : element -> getChildren())
+                    if (isFilter)
                     {
-                        if (elChild -> getTagName() == tag && elChild -> getText() == value)
+                        std::string attributeName = tag.substr(1);
+
+                        if (element -> getAttributes().count(attributeName) > 0 && element -> getAttribute(attributeName) == value)
                         {
                             conditionMet = true;
-                            break;
                         }
+                    }
+                    else
+                    {
+                        for(XMLElement* elChild : element -> getChildren())
+                        {
+                            if (elChild -> getTagName() == tag && elChild -> getText() == value)
+                            {
+                                conditionMet = true;
+                                break;
+                            }
+                        }   
                     }
 
                     if (conditionMet)

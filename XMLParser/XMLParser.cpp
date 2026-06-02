@@ -1,9 +1,7 @@
 #include "XMLParser.h"
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <stack>
-#include <vector>
 
 void setInitialID(XMLElement* element, std::vector<std::string>& ids, int& autoIdCounter);
 XMLElement* parseParent(std::string& line, std::vector<std::string>& ids, int& autoIdCounter);
@@ -14,8 +12,7 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
 {
     std::ifstream file(filePath);
 
-    if (!file)
-        return nullptr;
+    if (!file) return nullptr;
 
     XMLElement* parsedRoot;
     std::string line;
@@ -36,8 +33,7 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
     {
         line.erase(0, line.find_first_not_of(" \t\r\n"));
 
-        if (line.empty())
-            continue;
+        if (line.empty()) continue;
         else if (line.size() >= 2 && line.substr(0, 2) == "</")
         {
             if (!parentsStack.empty())
@@ -79,7 +75,7 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
 
             parentsStack.push(child);
         }
-        //else throw exception
+        else continue;
     }
 
     file.close();
@@ -90,13 +86,10 @@ bool XMLParser::saveToFile(const std::string& path, XMLElement* root)
 {
     std::ofstream file(path);
 
-    if (!file)
-        return false;
+    if (!file) return false;
     
     if (root != nullptr)
-    {
         print(file, root, 0);
-    }
     
     file.close();
     return true;
@@ -144,9 +137,11 @@ void setInitialID(XMLElement* element, std::vector<std::string>& ids, int& autoI
     else
     {
         int duplicateCounter = 0;
+
         for (const std::string& id : ids)
             if (id == elId)
                 duplicateCounter++;
+
         ids.push_back(elId);
 
         if (duplicateCounter > 0)
@@ -154,6 +149,7 @@ void setInitialID(XMLElement* element, std::vector<std::string>& ids, int& autoI
             elId += "_" + std::to_string(duplicateCounter);
             element -> setAttribute("id", elId);
         }
+
         element -> setId(elId);
     }
 }
