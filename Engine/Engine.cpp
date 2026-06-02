@@ -465,9 +465,7 @@ void Engine::executeXPathQuery(XMLElement* root, std::string xPathQuery)
                         std::string attributeName = tag.substr(1);
 
                         if (element -> getAttributes().count(attributeName) > 0 && element -> getAttribute(attributeName) == value)
-                        {
                             conditionMet = true;
-                        }
                     }
                     else
                     {
