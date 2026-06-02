@@ -404,9 +404,14 @@ void Engine::executeXPathQuery(XMLElement* root, std::string xPathQuery)
         if (atPos != std::string::npos)
         {
             std::string attribute = currentStep.substr(atPos + 1);
+            if (attribute.back() == ']')
+                attribute.pop_back();
 
-            if (root -> getAttributes().count(attribute) > 0)
-                std::cout << root -> getAttribute(attribute) << std::endl;
+            for (XMLElement* child : root -> getChildren())
+            {
+                if (child -> getAttributes().count(attribute) > 0)
+                    std::cout << child -> getAttribute(attribute) << std::endl;
+            }
         }
         else if (bracketStart != std::string::npos)
         {
@@ -481,6 +486,26 @@ void Engine::executeXPathQuery(XMLElement* root, std::string xPathQuery)
 
                     if (conditionMet)
                         executeXPathQuery(element, nextStep);
+                }
+            }
+        }
+        else if (bracketStart != std::string::npos)
+        {
+            int bracketEnd = currentStep.find("]");
+            std::string indexStr = currentStep.substr(bracketStart + 1, bracketEnd - bracketStart - 1);
+            int index = std::stoi(indexStr);
+
+            int counter = 0;
+            for (XMLElement* element : root -> getChildren())
+            {
+                if (element -> getTagName() == tagName)
+                {
+                    if (counter == index)
+                    {
+                        executeXPathQuery(element, nextStep);
+                        break;
+                    }
+                    counter++;
                 }
             }
         }
