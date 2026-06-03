@@ -142,10 +142,33 @@ void Engine::start()
             }
             else if (command == "help")
                 helpExtended();
-
+            else if (command == "count")
+            {
+                ss >> id;
+                XMLElement* element = findElementById(root, id);
+                std::cout << newFunc(element, id) << std::endl;
+            }
             else std::cout << "Invalid command. For command menu, use 'help'." << std::endl;
         }
     }
+}
+
+
+int Engine::newFunc(XMLElement* root, std::string id)
+{
+    int counter = 0;
+
+    for (XMLElement* child : root -> getChildren())
+    {
+        if (!child -> getChildren().empty())
+        {
+            counter += newFunc(child, id);
+        }
+
+        counter++;
+    }
+
+    return counter;
 }
 
 
@@ -457,32 +480,20 @@ void Engine::executeXPathQuery(XMLElement* root, std::string xPathQuery)
             if (!value.empty() && value.back() == '"')
                 value.pop_back();
 
-            bool isFilter = (tag.front() == '@');
-
             for(XMLElement* element : root -> getChildren())
             {
                 if (element -> getTagName() == tagName)
                 {
                     bool conditionMet = false;
 
-                    if (isFilter)
+                    for(XMLElement* elChild : element -> getChildren())
                     {
-                        std::string attributeName = tag.substr(1);
-
-                        if (element -> getAttributes().count(attributeName) > 0 && element -> getAttribute(attributeName) == value)
-                            conditionMet = true;
-                    }
-                    else
-                    {
-                        for(XMLElement* elChild : element -> getChildren())
+                        if (elChild -> getTagName() == tag && elChild -> getText() == value)
                         {
-                            if (elChild -> getTagName() == tag && elChild -> getText() == value)
-                            {
-                                conditionMet = true;
-                                break;
-                            }
-                        }   
-                    }
+                            conditionMet = true;
+                            break;
+                        }
+                    }  
 
                     if (conditionMet)
                         executeXPathQuery(element, nextStep);

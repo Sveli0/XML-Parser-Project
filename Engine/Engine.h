@@ -11,6 +11,7 @@ class Engine
         void printElement(XMLElement* element, int depth);
         XMLElement* findElementById(XMLElement* current, const std::string& id);
 
+        int newFunc(XMLElement* root, std::string id);
         void open(const std::string& filePath);
         void close();
         void save();

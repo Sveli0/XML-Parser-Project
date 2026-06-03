@@ -38,7 +38,7 @@ XMLElement* XMLParser::parseFile(const std::string& filePath)
         {
             if (!parentsStack.empty())
                 parentsStack.pop();
-        }
+        }   
         else if (line.substr(0, 1) == "<" && line.find("</") != std::string::npos)
         {
             int firstCloseBracket = line.find('>');
